@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tienda Online</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="cabecera">
+    <h1>Tienda Online</h1>
+    <form id="form-api" class="api-url">
+      <label for="api-url">Servidor API</label>
+      <input id="api-url" type="url" required>
+      <button type="submit">Conectar</button>
+      <span id="estado-api" class="estado">—</span>
+    </form>
+  </header>
+
+  <nav class="pestanas">
+    <button data-tab="productos" class="activa">Productos</button>
+    <button data-tab="usuarios">Usuarios</button>
+    <button data-tab="pedidos">Pedidos</button>
+  </nav>
+
+  <div id="aviso" class="aviso" hidden></div>
+
+  <main>
+    <!-- PRODUCTOS -->
+    <section id="tab-productos" class="tab">
+      <div class="panel">
+        <h2>Nuevo producto</h2>
+        <form id="form-producto" class="formulario">
+          <label>Tipo
+            <select name="tipo" id="producto-tipo">
+              <option value="generico">Genérico</option>
+              <option value="electronico">Electrónico</option>
+              <option value="ropa">Ropa</option>
+            </select>
+          </label>
+          <label>Nombre <input name="nombre" required></label>
+          <label>Precio (€) <input name="precio" type="number" step="0.01" min="0.01" required></label>
+          <label>Stock <input name="stock" type="number" min="0" step="1" required></label>
+          <label class="solo-electronico" hidden>Meses de garantía
+            <input name="meses_garantia" type="number" min="0" step="1">
+          </label>
+          <label class="solo-ropa" hidden>Talla <input name="talla"></label>
+          <label class="solo-ropa" hidden>Color <input name="color"></label>
+          <button type="submit">Crear producto</button>
+        </form>
+      </div>
+      <div class="panel ancho">
+        <div class="panel-titulo">
+          <h2>Productos</h2>
+          <button class="secundario" data-recargar="productos">Recargar</button>
+        </div>
+        <table>
+          <thead><tr><th>ID</th><th>Tipo</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Detalles</th><th></th></tr></thead>
+          <tbody id="tabla-productos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- USUARIOS -->
+    <section id="tab-usuarios" class="tab" hidden>
+      <div class="panel">
+        <h2>Nuevo usuario</h2>
+        <form id="form-usuario" class="formulario">
+          <label>Tipo
+            <select name="tipo">
+              <option value="cliente">Cliente</option>
+              <option value="administrador">Administrador</option>
+            </select>
+          </label>
+          <label>Nombre <input name="nombre" required></label>
+          <label>Email <input name="email" type="email" required></label>
+          <label>Dirección postal <input name="direccion_postal"></label>
+          <button type="submit">Crear usuario</button>
+        </form>
+      </div>
+      <div class="panel ancho">
+        <div class="panel-titulo">
+          <h2>Usuarios</h2>
+          <button class="secundario" data-recargar="usuarios">Recargar</button>
+        </div>
+        <table>
+          <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th></tr></thead>
+          <tbody id="tabla-usuarios"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section id="tab-pedidos" class="tab" hidden>
+      <div class="panel">
+        <h2>Nuevo pedido</h2>
+        <form id="form-pedido" class="formulario">
+          <label>Cliente <select id="pedido-cliente" required></select></label>
+          <div id="lineas-pedido"></div>
+          <button type="button" class="secundario" id="anadir-linea">+ Añadir producto</button>
+          <button type="submit">Crear pedido</button>
+        </form>
+      </div>
+      <div class="panel ancho">
+        <h2>Pedidos de un cliente</h2>
+        <form id="form-consulta" class="fila">
+          <select id="consulta-cliente" required></select>
+          <button type="submit">Consultar</button>
+        </form>
+        <div id="lista-pedidos"></div>
+      </div>
+    </section>
+  </main>
+
+  <template id="plantilla-linea">
+    <div class="linea">
+      <select class="linea-producto" required></select>
+      <input class="linea-cantidad" type="number" min="1" step="1" value="1" required>
+      <button type="button" class="quitar" title="Quitar línea">×</button>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+:root {
+  --fondo: #f5f6f8;
+  --superficie: #ffffff;
+  --texto: #1d2330;
+  --suave: #667085;
+  --borde: #e2e5ea;
+  --primario: #2f5fd0;
+  --primario-hover: #244bb0;
+  --exito-fondo: #e7f6ec;
+  --exito-texto: #1e6b3a;
+  --error-fondo: #fdecec;
+  --error-texto: #a12a2a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  font-size: 15px;
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+.cabecera h1 { margin: 0; font-size: 1.3rem; }
+
+.api-url { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.api-url label { color: var(--suave); font-size: 0.85rem; }
+.api-url input { width: 240px; }
+
+.estado { font-size: 0.85rem; color: var(--suave); }
+.estado.ok { color: var(--exito-texto); }
+.estado.ko { color: var(--error-texto); }
+
+.pestanas { display: flex; gap: 4px; padding: 12px 24px 0; }
+.pestanas button {
+  background: none;
+  color: var(--suave);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 8px 14px;
+}
+.pestanas button.activa { color: var(--primario); border-bottom-color: var(--primario); }
+
+main { padding: 16px 24px 40px; }
+
+.tab { display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+.tab[hidden] { display: none; }
+
+.panel {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 16px 18px;
+  min-width: 0;
+}
+.panel h2 { margin: 0 0 12px; font-size: 1.05rem; }
+.panel-titulo { display: flex; justify-content: space-between; align-items: center; }
+
+.formulario { display: flex; flex-direction: column; gap: 10px; }
+.formulario label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--suave); }
+.formulario label[hidden] { display: none; }
+.fila { display: flex; gap: 8px; margin-bottom: 12px; }
+
+input, select {
+  font: inherit;
+  padding: 7px 9px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--texto);
+}
+
+button {
+  font: inherit;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background: var(--primario);
+  color: #fff;
+  cursor: pointer;
+}
+button:hover { background: var(--primario-hover); }
+button.secundario { background: #eef1f6; color: var(--texto); }
+button.secundario:hover { background: #e2e6ee; }
+button.peligro { background: none; color: var(--error-texto); padding: 4px 8px; }
+button.peligro:hover { background: var(--error-fondo); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--borde); }
+th { color: var(--suave); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.vacio { color: var(--suave); text-align: center; padding: 18px; }
+
+.etiqueta {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: #eef1f6;
+}
+
+.linea { display: grid; grid-template-columns: 1fr 70px 32px; gap: 6px; margin-bottom: 6px; }
+.linea .quitar { background: none; color: var(--suave); padding: 0; font-size: 1.2rem; }
+.linea .quitar:hover { color: var(--error-texto); }
+
+.pedido { border: 1px solid var(--borde); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+.pedido-cabecera { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 6px; }
+.pedido-fecha { color: var(--suave); font-size: 0.85rem; font-weight: 400; }
+
+.aviso { margin: 12px 24px 0; padding: 10px 14px; border-radius: 8px; }
+.aviso.exito { background: var(--exito-fondo); color: var(--exito-texto); }
+.aviso.error { background: var(--error-fondo); color: var(--error-texto); }
+
+@media (max-width: 760px) {
+  .cabecera, main { padding-left: 16px; padding-right: 16px; }
+  .pestanas { padding: 12px 16px 0; }
+  .aviso { margin: 12px 16px 0; }
+  .tab { grid-template-columns: 1fr; }
+  .api-url input { width: 100%; }
+  .panel.ancho { overflow-x: auto; }
+}
