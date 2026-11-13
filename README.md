@@ -32,11 +32,15 @@ marina-devops-practica/
 │   │   ├── producto.py         ProductoCreate, ProductoRead
 │   │   └── pedido.py           PedidoItemCreate, PedidoCreate, PedidoItemRead, PedidoRead
 │   └── main.py                 Parte 2: endpoints (punto de entrada)
-├── requirements.txt            Dependencias del servidor
+├── requirements.txt            Dependencias del servidor (versiones fijadas)
+├── Dockerfile                  Imagen Docker de la API
+├── .dockerignore               Ficheros excluidos al construir la imagen
+├── docker-compose.yml          Levanta API + frontend (extra)
 ├── cliente/                    Práctica 2 parte 2 – Parte 1: cliente Python
 │   ├── cliente.py
 │   └── requirements.txt
 └── frontend/                   Práctica 2 parte 2 – Parte 3: frontend web
+    ├── Dockerfile              Imagen nginx con el frontend (extra)
     ├── index.html
     ├── styles.css
     └── app.js
@@ -72,6 +76,117 @@ uvicorn main:app --reload
 - Documentación interactiva (Swagger): <http://localhost:8000/docs>
 
 Los datos se guardan en memoria: se pierden al reiniciar el servidor.
+
+## Docker
+
+La API se puede ejecutar en un contenedor sin instalar Python ni dependencias
+en el equipo. Solo hace falta [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+### Qué hace el Dockerfile
+
+1. Parte de la imagen oficial `python:3.12-slim`.
+2. Copia `requirements.txt` e instala las dependencias con `pip install`
+   (versiones fijadas, sin guardar caché).
+3. Copia el código fuente de `src/`.
+4. Crea el usuario sin privilegios `appuser`, le da la propiedad del código y
+   ejecuta la aplicación con él (no como `root`).
+5. Arranca la API con `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+
+El fichero `.dockerignore` deja fuera de la imagen `.git`, cachés de Python,
+entornos virtuales, `.env`, el cliente, el frontend y la documentación.
+
+### Construir la imagen
+
+Desde la raíz del repositorio:
+
+```bash
+docker build -t tienda-online:1.0.0 .
+```
+
+### Ejecutar el contenedor
+
+```bash
+# En primer plano (Ctrl+C para pararlo)
+docker run --rm -p 8000:8000 tienda-online:1.0.0
+
+# En segundo plano, con nombre
+docker run -d --name tienda -p 8000:8000 tienda-online:1.0.0
+docker logs tienda
+docker stop tienda && docker rm tienda
+
+# Cambiando el puerto interno con la variable PORT
+docker run --rm -e PORT=9000 -p 9000:9000 tienda-online:1.0.0
+```
+
+### Variables de entorno
+
+| Variable | Valor por defecto | Descripción |
+| --- | --- | --- |
+| `PORT` | `8000` | Puerto en el que escucha uvicorn dentro del contenedor |
+
+La aplicación no usa secretos ni claves.
+
+### Salida esperada y pruebas
+
+Al arrancar, el contenedor muestra:
+
+```text
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
+
+Comprobaciones:
+
+1. <http://localhost:8000> devuelve
+   `{"mensaje": "API de la Tienda Online", "documentacion": "/docs"}`.
+2. <http://localhost:8000/docs> muestra la documentación Swagger con todos los
+   endpoints.
+3. Con el contenedor en marcha, el cliente Python hace el recorrido completo
+   (crear usuario, productos y pedido) contra la API del contenedor:
+
+   ```bash
+   cd cliente
+   python -m pip install -r requirements.txt
+   python cliente.py
+   ```
+
+   Todas las peticiones deben responder `201` o `200` y la última, el pedido
+   sin stock, `400`.
+
+### Publicar y descargar la imagen (Docker Hub)
+
+```bash
+docker login
+docker tag tienda-online:1.0.0 marinagarciac/tienda-online:1.0.0
+docker tag tienda-online:1.0.0 marinagarciac/tienda-online:latest
+docker push marinagarciac/tienda-online:1.0.0
+docker push marinagarciac/tienda-online:latest
+```
+
+Cualquier persona puede descargarla y ejecutarla con:
+
+```bash
+docker pull marinagarciac/tienda-online:1.0.0
+docker run --rm -p 8000:8000 marinagarciac/tienda-online:1.0.0
+```
+
+### API + frontend con Docker Compose (extra)
+
+`frontend/Dockerfile` sirve el frontend con `nginx`, y `docker-compose.yml`
+levanta los dos contenedores a la vez:
+
+```bash
+docker compose up --build      # Ctrl+C para parar
+docker compose down
+```
+
+- API: <http://localhost:8000/docs>
+- Frontend: <http://localhost:8080>
+
+El frontend se ejecuta en el navegador y llama a la API en
+`http://localhost:8000`, el puerto que publica el contenedor `api`.
 
 ## Endpoints
 

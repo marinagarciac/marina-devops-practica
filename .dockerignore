@@ -1,0 +1,30 @@
+# Control de versiones
+.git
+.gitignore
+
+# Python: cachés y entornos virtuales
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Secretos
+.env
+
+# Partes que no forman parte de la imagen del servidor
+cliente/
+frontend/
+docker-compose.yml
+
+# Documentación y ficheros de Docker
+*.md
+Dockerfile
+.dockerignore
+
+# IDEs y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
